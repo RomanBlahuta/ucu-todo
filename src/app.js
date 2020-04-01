@@ -1,38 +1,83 @@
+//----------------------------------------------------------------------------------------------------------//
+
 import Stepan from '/src/lib/stepan.js';
 
-import {
-  TodoListHead,
-  TodoListToggleAll,
-  TodoList
-} from './components/todoList/index.js';
+import {TodoList, TodoListHead, TodoListToggleAll} from './components/todoList/index.js';
 
-import { Footer } from './components/footer/index.js';
+import {Footer} from './components/footer/index.js';
 
-const todos = [
-  {isDone: true, title: '(Done) Todo 1'},
-  {isDone: false, title: 'Todo 2'}
+//----------------------------------------------------------------------------------------------------------//
+
+let todos = [
+  {isDone: true, title: '(Done) Todo 1', id: 'todo1'},
+  {isDone: false, title: 'Todo 2', id: 'todo2'}
 ];
 
+
+
 class App extends Stepan.Component {
-  render(todos =  []) {
+
+  constructor(parent, todos) {
+    super(parent);
+    this.parent = parent;
+    this.todos = todos;
+
+  }
+
+//todos =  []
+  render() {
     const rootElement = this.parent;
     const divContainer = Stepan.createElement('div', rootElement);
 
     // TodoListHead-----------------
-    new TodoListHead(divContainer).render();
+    this.head = new TodoListHead(divContainer);
+    this.head.render();
 
     // TodoListToggleAll-----------------
     const sectionMain = Stepan.createElement('section', divContainer, { class: 'main' });
-    new TodoListToggleAll(sectionMain).render();
+    this.toggle = new TodoListToggleAll(sectionMain);
+    this.toggle.render();
 
     // TodoList-----------------
-    new TodoList(sectionMain).render(todos);
+    this.list = new TodoList(sectionMain);
+    this.list.render(this.todos);
 
     // Footer-----------------
-    new Footer(divContainer).render(todos)
+    this.foot = new Footer(divContainer);
+    this.foot.render(this.todos);
 
     return rootElement
   }
+
+  static toggle(event) {
+    let id = event.originalTarget.id;
+    console.log(app.todos);
+    for (let el of app.todos) {
+      if (el.id+'-cb' === id) {
+        el.isDone = !(el.isDone);
+      }
+    }
+    console.log(app.todos);
+    app.list.render(app.todos);
+    app.listenTgl();
+  }
+
+  listenTgl() {
+    for (const el of this.todos) {
+      const oneTodo = document.getElementById(el.id + '-cb');
+      oneTodo.addEventListener('click',App.toggle);
+    }
+  }
+
+
 }
 
-new App(document.getElementById('todoapp')).render(todos)
+//----------------------------------------------------------------------------------------------------------//
+
+let app = new App(document.getElementById('todoapp'), todos);
+app.render();
+app.listenTgl();
+//new App(document.getElementById('todoapp')).render([{isDone: true, title: 'Third'}])
+
+//const newTodo = document.getElementById("newTodo");
+//newTodo.addEventListener('input', app.addTodo(newTodo.value, todos))

@@ -11,6 +11,11 @@
 import Stepan from '/src/lib/stepan.js';
 
 export default class Footer extends Stepan.Component {
+
+  //constructor() {
+
+  //}
+
   render(todos) { // render will always accept data to render
     const rootElement = Stepan.createElement('footer', this.parent, { class: 'footer' });
     Stepan.createElement('span', rootElement, {class: 'todo-count', innerText: `${todos.length} items left`});
